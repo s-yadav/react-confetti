@@ -14,6 +14,7 @@ export default class Confetti extends React.PureComponent {
     colors: PropTypes.arrayOf(PropTypes.string),
     opacity: PropTypes.number,
     recycle: PropTypes.bool,
+    shapes: PropTypes.arrayOf(PropTypes.oneOf(['rectangle', 'circle']))
   }
 
   static defaultProps = {
@@ -29,6 +30,7 @@ export default class Confetti extends React.PureComponent {
     ],
     opacity: 1.0,
     recycle: true,
+    shapes: ['rectangle', 'circle']
   }
 
   componentDidMount() {
@@ -39,6 +41,7 @@ export default class Confetti extends React.PureComponent {
       .gravity(this.props.gravity)
       .colors(this.props.colors)
       .opacity(this.props.opacity)
+      .shapes(this.props.shapes)
       .recycle(this.props.recycle)()
   }
 
@@ -50,7 +53,12 @@ export default class Confetti extends React.PureComponent {
       .gravity(nextProps.gravity)
       .colors(nextProps.colors)
       .opacity(nextProps.opacity)
+      .shapes(nextProps.shapes)
       .recycle(nextProps.recycle)
+  }
+
+  componentWillUnmount() {
+    this.confetti.destroy()
   }
 
   render() {

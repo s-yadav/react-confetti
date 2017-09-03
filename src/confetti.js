@@ -17,6 +17,8 @@ function confetti(canvasObj) {
   ]
   let opacity = 1.0
   let recycle = true
+  let shapes = ['rectangle', 'circle']
+  let destroyed = false
 
   function self() {
     const canvas = canvasObj
@@ -28,7 +30,7 @@ function confetti(canvasObj) {
       this.y = y
       this.vx = utils.randomRange(-4, 4)
       this.vy = utils.randomRange(-10, -0)
-      this.type = utils.randomInt(0, 1)
+      this.type = shapes[utils.randomInt(0, shapes.length - 1)]
 
       this.w = utils.randomRange(5, 20)
       this.h = utils.randomRange(5, 20)
@@ -67,11 +69,11 @@ function confetti(canvasObj) {
       context.globalAlpha = opacity
       context.lineCap = 'round'
       context.lineWidth = 2
-      if(this.type === 0) {
+      if(this.type === 'circle') {
         context.beginPath()
         context.arc(0, 0, this.r, 0, 2 * Math.PI)
         context.fill()
-      } else if(this.type === 2) {
+      } else if(this.type === 2 /*shape need to be defined for this*/) {
         context.beginPath()
         for(let i = 0; i < 22; i++) {
           const angle = 0.5 * i
@@ -80,7 +82,7 @@ function confetti(canvasObj) {
           context.lineTo(x, y)
         }
         context.stroke()
-      } else if(this.type === 1) {
+      } else if(this.type === 'rectangle') {
         context.fillRect(-this.w / 2, -this.h / 2, this.w, this.h)
       }
       context.closePath()
@@ -154,7 +156,7 @@ function confetti(canvasObj) {
       // context.globalAlpha=.5;
       context.fillStyle = 'white'
       context.clearRect(0, 0, canvas.width, canvas.height)
-      if(generator1.animate()) {
+      if(generator1.animate() && !destroyed) {
         requestAnimationFrame(update)
       }
     }
@@ -205,6 +207,17 @@ function confetti(canvasObj) {
     if(!args.length) { return recycle }
     recycle = args[0]
     return self
+  }
+
+  self.shapes = (...args) => {
+    if(!args.length) { return shapes }
+    shapes = args[0]
+    return self
+  }
+
+  /** destroy the confetti instance **/
+  self.destroy = () => {
+    destroyed = true
   }
 
   return self
